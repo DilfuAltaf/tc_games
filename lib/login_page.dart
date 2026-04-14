@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'providers/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,18 +28,15 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      final response = await http.post(
-        Uri.parse('https://api-tcg-backend.vercel.app/api/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "username": _usernameController.text,
-          "password": _passwordController.text,
-        }),
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final success = await authProvider.login(
+        _usernameController.text,
+        _passwordController.text,
       );
 
       if (!mounted) return;
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -48,14 +47,15 @@ class _LoginPageState extends State<LoginPage> {
             behavior: SnackBarBehavior.floating,
           ),
         );
+        context.go('/dashboard');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
-              'Oh no! Login failed: ${response.body}',
-              style: const TextStyle(fontSize: 16),
+              'Oh no! Login failed.',
+              style: TextStyle(fontSize: 16),
             ),
-            backgroundColor: const Color(0xFFE3350D), // Pokemon Red
+            backgroundColor: Color(0xFFE3350D), // Pokemon Red
             behavior: SnackBarBehavior.floating,
           ),
         );

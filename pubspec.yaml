@@ -28,12 +28,15 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cached_network_image: ^3.4.1
   cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
   go_router: ^17.0.0
   http: ^1.6.0
+  intl: ^0.20.2
   provider: ^6.1.5+1
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
 
